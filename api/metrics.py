@@ -36,38 +36,36 @@ def handler(request, context):
             "body": "Metrics endpoint is alive",
             "headers": {"Access-Control-Allow-Origin": "*"}
         }
-
-
-def handler(request, context):
-    try:
-        body = json.loads(request.body)
-        regions = body.get("regions", [])
-        threshold_ms = body.get("threshold_ms")
-
-        if threshold_ms is None:
+    if request.method == "POST":
+        try:
+            body = json.loads(request.body)
+            regions = body.get("regions", [])
+            threshold_ms = body.get("threshold_ms")
+    
+            if threshold_ms is None:
+                return {
+                    "statusCode": 400,
+                    "body": json.dumps({"error": "threshold_ms is required"}),
+                    "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST"}
+                }
+    
+            response = {}
+            for region in regions:
+                if region not in DATA:
+                    response[region] = None
+                    continue
+                metrics = calculate_metrics(DATA[region]["latency"], DATA[region]["uptime"], threshold_ms)
+                response[region] = metrics
+    
             return {
-                "statusCode": 400,
-                "body": json.dumps({"error": "threshold_ms is required"}),
+                "statusCode": 200,
+                "body": json.dumps(response),
                 "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST"}
             }
-
-        response = {}
-        for region in regions:
-            if region not in DATA:
-                response[region] = None
-                continue
-            metrics = calculate_metrics(DATA[region]["latency"], DATA[region]["uptime"], threshold_ms)
-            response[region] = metrics
-
-        return {
-            "statusCode": 200,
-            "body": json.dumps(response),
-            "headers": {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST"}
-        }
-
-    except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": str(e)}),
-            "headers": {"Access-Control-Allow-Origin": "*"}
-        }
+    
+        except Exception as e:
+            return {
+                "statusCode": 500,
+                "body": json.dumps({"error": str(e)}),
+                "headers": {"Access-Control-Allow-Origin": "*"}
+            }
