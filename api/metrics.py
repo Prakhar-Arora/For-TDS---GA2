@@ -30,6 +30,15 @@ def calculate_metrics(latencies, uptimes, threshold):
     }
 
 def handler(request, context):
+    if request.method == "GET":
+        return {
+            "statusCode": 200,
+            "body": "Metrics endpoint is alive",
+            "headers": {"Access-Control-Allow-Origin": "*"}
+        }
+
+
+def handler(request, context):
     try:
         body = json.loads(request.body)
         regions = body.get("regions", [])
