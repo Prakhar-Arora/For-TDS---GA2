@@ -1,0 +1,22 @@
+name: Cache Dependencies Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cache-prime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Prime cache with key cache-b7cf18b
+        id: cache-prime-b7cf18b
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/my-dependencies
+          key: cache-b7cf18b
+          restore-keys: |
+
+      - name: prime-cache-b7cf18b
+        run: echo "Cache hit? ${{ steps.cache-prime-b7cf18b.outputs.cache-hit }}"
