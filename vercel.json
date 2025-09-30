@@ -1,5 +1,10 @@
 {
-  "builds": [{ "src": "api/index.py", "use": "@vercel/python" }],
-  "routes": [{ "src": "/(.*)", "dest": "api/index.py" }],
-  "functions": [{ "api/metrics.py": {"runtime": "vercel-python@0.5.0"}}]
+  "functions": {
+    "api/metrics.py": {
+      "runtime": "vercel-python@0.5.0"
+    },
+    "api/index.py": {
+      "runtime": "vercel-python@0.5.0"
+    }
+  }
 }
