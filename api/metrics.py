@@ -30,6 +30,12 @@ def calculate_metrics(latencies, uptimes, threshold):
     }
 
 def handler(request, context):
+    if request.path == "/favicon.ico" or request.path == "/favicon.png":
+        return {
+            "statusCode": 204,
+            "body": "",
+            "headers": {"Access-Control-Allow-Origin": "*"}
+        }
     if request.method == "GET":
         return {
             "statusCode": 200,
